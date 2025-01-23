@@ -5,3 +5,4 @@ uvicorn
 firebase-admin
 pydantic-settings
 fastapi-mail
+sqlalchemy
