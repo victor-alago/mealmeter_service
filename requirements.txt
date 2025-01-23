@@ -1,0 +1,7 @@
+fastapi
+python_dotenv
+asyncpg
+uvicorn
+firebase-admin
+pydantic-settings
+fastapi-mail
