@@ -5,7 +5,7 @@ from app.services.firebase_service import (
     create_user,
     verify_email_verification_code,
     send_verification_email,
-    login_user
+    login_user,
 )
 from pydantic import BaseModel
 from firebase_admin import auth  # Import the `auth` module from Firebase Admin SDK
@@ -70,7 +70,7 @@ async def login(request: LoginRequest):
             "message": "Login successful",
             "id_token": login_data["id_token"],
             "refresh_token": login_data["refresh_token"],
-            "email": login_data["email"]
+            "email": login_data["email"],
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

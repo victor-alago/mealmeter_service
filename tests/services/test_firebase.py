@@ -1,4 +1,3 @@
-
 import pytest
 from firebase_admin import auth
 from app.services.firebase_service import create_user, verify_token, login_user

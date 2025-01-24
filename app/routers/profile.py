@@ -92,7 +92,7 @@ async def create_profile(
             detail="Missing or invalid Authorization header",
         )
 
-    token = authorization[7:]  
+    token = authorization[7:]
     current_user = verify_token(token)
 
     try:
@@ -113,9 +113,7 @@ async def create_profile(
             current_user["uid"], profile_dict
         )
         if not result:
-            raise HTTPException(
-                status_code=500, detail="Failed to create profile"
-            )
+            raise HTTPException(status_code=500, detail="Failed to create profile")
 
         return {
             "message": "Profile created successfully",
@@ -143,7 +141,7 @@ async def update_profile(
             detail="Missing or invalid Authorization header",
         )
 
-    token = authorization[7:]  
+    token = authorization[7:]
     current_user = verify_token(token)
 
     try:
@@ -167,9 +165,7 @@ async def update_profile(
             current_user["uid"], profile_dict
         )
         if not result:
-            raise HTTPException(
-                status_code=500, detail="Failed to update profile"
-            )
+            raise HTTPException(status_code=500, detail="Failed to update profile")
 
         # Fetch the updated profile from the database
         updated_profile = await mongodb_service.get_user_profile(current_user["uid"])
