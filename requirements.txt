@@ -6,3 +6,6 @@ firebase-admin
 pydantic-settings
 fastapi-mail
 sqlalchemy
+pytest
+pytest-asyncio
+httpx
