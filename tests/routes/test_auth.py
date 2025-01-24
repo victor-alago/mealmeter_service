@@ -48,4 +48,3 @@ def test_login():
     assert data["message"] == "Login successful"
     assert "id_token" in data
     assert "refresh_token" in data
-

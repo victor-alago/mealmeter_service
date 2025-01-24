@@ -30,7 +30,6 @@ def test_create_user():
     assert user.uid is not None
 
 
-
 def test_login_user():
     """Test user login."""
     create_user(TEST_EMAIL, TEST_PASSWORD)
