@@ -9,3 +9,4 @@ sqlalchemy
 pytest
 pytest-asyncio
 httpx
+flake8

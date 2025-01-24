@@ -12,9 +12,11 @@ from firebase_admin import auth  # Import the `auth` module from Firebase Admin 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+
 class SignupRequest(BaseModel):
     email: str
     password: str
+
 
 class LoginRequest(BaseModel):
     email: str
@@ -49,6 +51,7 @@ async def verify(id_token: str):
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
 
+
 @router.get("/verify-email")
 async def verify_email(oob_code: str):
     try:
@@ -71,5 +74,3 @@ async def login(request: LoginRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
-

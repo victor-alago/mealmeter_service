@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 120
+ignore = E402,F401,E302,E305,W391,W292
+exclude = 
+    tests/*,
+    migrations/*
