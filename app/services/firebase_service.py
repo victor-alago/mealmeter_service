@@ -21,6 +21,7 @@ conf = ConnectionConfig(
     USE_CREDENTIALS=True,  # Enable authentication
 )
 
+
 # Function to create a user and send an email verification
 def create_user(email: str, password: str):
     try:
@@ -47,7 +48,7 @@ async def send_verification_email(email: str, link: str):
         <p><a href="{link}">Verify Email</a></p>
         <p>If the above link doesn't work, copy and paste this URL into your browser: {link}</p>
         """,
-        subtype="html"  # Send as HTML
+        subtype="html",  # Send as HTML
     )
 
     fm = FastMail(conf)
@@ -57,6 +58,7 @@ async def send_verification_email(email: str, link: str):
     except Exception as e:
         print(f"Error sending email to {email}: {e}")
 
+
 # Function to verify Firebase ID token
 def verify_token(id_token: str):
     try:
@@ -64,6 +66,7 @@ def verify_token(id_token: str):
         return decoded_token
     except Exception as e:
         raise ValueError("Invalid token") from e
+
 
 # Function to verify email verification code
 def verify_email_verification_code(oob_code: str):
@@ -81,30 +84,29 @@ def login_user(email: str, password: str):
 
         # Login with email and password
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}"
-        payload = {
-            "email": email,
-            "password": password,
-            "returnSecureToken": True
-        }
+        payload = {"email": email, "password": password, "returnSecureToken": True}
 
         response = requests.post(url, json=payload)
         response_data = response.json()
 
         if response.status_code != 200:
-            raise ValueError(response_data.get("error", {}).get("message", "Login failed"))
+            raise ValueError(
+                response_data.get("error", {}).get("message", "Login failed")
+            )
 
         # Retrieve user details to check email verification status
         user = auth.get_user_by_email(email)
         if not user.email_verified:
-            raise ValueError("Email not verified. Please verify your email before logging in.")
+            raise ValueError(
+                "Email not verified. Please verify your email before logging in."
+            )
 
         # Return the ID token and other user information
         return {
             "id_token": response_data["idToken"],
             "refresh_token": response_data["refreshToken"],
             "email": response_data["email"],
-            "local_id": response_data["localId"]
+            "local_id": response_data["localId"],
         }
     except Exception as e:
         raise ValueError(f"Error logging in user: {e}")
-
