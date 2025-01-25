@@ -10,4 +10,4 @@ pytest
 pytest-asyncio
 httpx
 flake8
-pymongo
+pymongo[srv]
