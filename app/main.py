@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth
+from app.routers import auth, profile, insights, food_logging, food_search, food_search_ninjas
 
 app = FastAPI()
 
@@ -15,3 +15,8 @@ app.add_middleware(
 
 # Include the authentication router
 app.include_router(auth.router)
+app.include_router(profile.router)
+app.include_router(insights.router)
+app.include_router(food_logging.router)
+app.include_router(food_search.router)
+app.include_router(food_search_ninjas.router)

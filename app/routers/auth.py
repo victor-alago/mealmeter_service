@@ -1,14 +1,15 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import HTMLResponse
 from app.services.firebase_service import (
     verify_token,
     create_user,
     verify_email_verification_code,
     send_verification_email,
-    login_user
+    login_user,
 )
 from pydantic import BaseModel
 from firebase_admin import auth  # Import the `auth` module from Firebase Admin SDK
+from app.services.mongodb_service import MongoDBService, get_mongodb_service
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -24,9 +25,9 @@ class LoginRequest(BaseModel):
 
 
 @router.post("/signup")
-async def signup(request: SignupRequest):
+async def signup(request: SignupRequest, mongodb_service: MongoDBService = Depends(get_mongodb_service)):
     try:
-        # Create the user or retrieve an existing one
+        # Create the user in Firebase
         user = create_user(email=request.email, password=request.password)
 
         # Generate an email verification link
@@ -34,6 +35,12 @@ async def signup(request: SignupRequest):
 
         # Send the verification email
         await send_verification_email(request.email, email_verification_link)
+
+        # Create a preliminary MongoDB profile
+        profile_data = {"user_id": user.uid, "is_setup": False}
+        created = await mongodb_service.create_user_profile(user.uid, profile_data)
+        if not created:
+            raise HTTPException(status_code=500, detail="Failed to create initial user profile in MongoDB")
 
         return {
             "message": "User created successfully. Verification email sent.",
@@ -70,7 +77,7 @@ async def login(request: LoginRequest):
             "message": "Login successful",
             "id_token": login_data["id_token"],
             "refresh_token": login_data["refresh_token"],
-            "email": login_data["email"]
+            "email": login_data["email"],
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
