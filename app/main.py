@@ -18,4 +18,3 @@ app.include_router(auth.router)
 app.include_router(profile.router)
 app.include_router(insights.router)
 app.include_router(food_logging.router)
-
