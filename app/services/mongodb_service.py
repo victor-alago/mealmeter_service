@@ -60,7 +60,7 @@ class MongoDBService:
         try:
             profile = self.profiles.find_one({"user_id": user_id})
             if profile:
-                profile['_id'] = str(profile['_id'])  # Convert ObjectId to string
+                profile["_id"] = str(profile["_id"])  # Convert ObjectId to string
             return profile
         except PyMongoError as e:
             raise RuntimeError(f"MongoDB operation failed: {str(e)}")
