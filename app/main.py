@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, profile
+from app.routers import auth, food_logging, profile
 
 app = FastAPI()
 
@@ -16,3 +16,4 @@ app.add_middleware(
 # Include the authentication router
 app.include_router(auth.router)
 app.include_router(profile.router)
+app.include_router(food_logging.router)
