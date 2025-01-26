@@ -160,6 +160,24 @@ class UserProfileUpdate(BaseModel):
         return values
 
 
+@router.get("/profile")
+async def get_profile(authorization: str = Header(None), mongodb_service: MongoDBService = Depends(get_mongodb_service)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
+
+    token = authorization[7:]  # Extract the token part past "Bearer "
+    try:
+        current_user = verify_token(token)
+    except Exception as e:
+        raise HTTPException(status_code=403, detail="Invalid token")
+
+    profile = await mongodb_service.get_user_profile(current_user['uid'])
+    if profile:
+        return {"message": "Profile retrieved successfully", "profile_data": profile}
+    else:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+
 @router.post("/profile", status_code=201)
 async def create_profile(
     profile_data: UserProfileCreate,
