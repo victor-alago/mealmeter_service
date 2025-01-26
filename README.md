@@ -62,3 +62,140 @@ Repo for meal meter services
         2. id_token
         3. refresh_token
         4. user's email
+
+
+
+#### FOOD LOG ROUTES
+
+- ##### Add Food
+    - Route:
+    ```js
+        POST http://127.0.0.1:8000/food-log/entry
+    ```
+
+    - Body:
+    ```json
+        {
+            "food_name": "Pasta",
+            "meal_type": "Lunch",
+            "calories": 750,
+            "serving_size": "1 plate",
+            "date": "2024-01-25"
+        }
+    ```
+    - Remember to add Auth Token in the Header !
+
+    - Returned Details:
+    ```json
+        {
+            "message": "Food entry logged successfully"
+        }
+    ```
+    - 201 Success Code
+
+
+- ##### Get Food By Day
+    - Route:
+    ```js
+        GET http://127.0.0.1:8000/food-log/daily/2024-01-25   //date format -> yyyy-mm-dd
+    ```
+
+    - Remember to add Auth Token in the Header !
+
+    - Returned Details:
+    ```json
+        [
+            {
+                "date": "2024-01-25",
+                "total_calories": 750.0,
+                "target_calories": 2000.0,
+                "remaining_calories": 1250.0,
+                "meals": {
+                    "breakfast": [
+                        {
+                            "food_name": "Oatmeal with banana",
+                            "calories": 300.0,
+                            "serving_size": "1 bowl"
+                        }
+                    ],
+                    "lunch": [
+                        {
+                            "food_name": "Chicken Caesar Salad",
+                            "calories": 450.0,
+                            "serving_size": "1 plate"
+                        }
+                    ],
+                    "dinner": [],
+                    "snacks": [],
+                    "drinks": []
+                }
+            }
+        ]
+    ```
+    - 200 Ok Code
+
+
+- ##### Get All Food Logged By User
+    - Route:
+    ```js
+        GET http://127.0.0.1:8000/food-log/all
+    ```
+
+    - Remember to add Auth Token in the Header !
+
+    - Returned Details:
+    ```json
+        [
+            {
+                "date": "2024-01-27",
+                "total_calories": 900.0,
+                "target_calories": 2000.0,
+                "remaining_calories": 1100.0,
+                "meals": {
+                    "breakfast": [],
+                    "lunch": [],
+                    "dinner": [],
+                    "snacks": [
+                        {
+                            "food_name": "Mayonnaise Pam",
+                            "calories": 450.0,
+                            "serving_size": "1 plate"
+                        }
+                    ],
+                    "drinks": [
+                        {
+                            "food_name": "Orange Juice",
+                            "calories": 450.0,
+                            "serving_size": "1 bottle"
+                        }
+                    ]
+                }
+            },
+            {
+                "date": "2024-01-25",
+                "total_calories": 750.0,
+                "target_calories": 2000.0,
+                "remaining_calories": 1250.0,
+                "meals": {
+                    "breakfast": [
+                        {
+                            "food_name": "Oatmeal with banana",
+                            "calories": 300.0,
+                            "serving_size": "1 bowl"
+                        }
+                    ],
+                    "lunch": [
+                        {
+                            "food_name": "Chicken Caesar Salad",
+                            "calories": 450.0,
+                            "serving_size": "1 plate"
+                        }
+                    ],
+                    "dinner": [],
+                    "snacks": [],
+                    "drinks": []
+                }
+            }
+        ]
+    ```
+    - 200 Ok Code
