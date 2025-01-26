@@ -67,6 +67,8 @@ class MongoDBService:
     async def get_user_profile(self, user_id: str) -> Optional[Dict[str, Any]]:
         try:
             profile = self.profiles.find_one({"user_id": user_id})
+            if profile:
+                profile["_id"] = str(profile["_id"])  # Convert ObjectId to string
             return profile
         except PyMongoError as e:
             raise RuntimeError(f"MongoDB operation failed: {str(e)}")

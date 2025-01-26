@@ -160,6 +160,29 @@ class UserProfileUpdate(BaseModel):
         return values
 
 
+@router.get("/profile")
+async def get_profile(
+    authorization: str = Header(None),
+    mongodb_service: MongoDBService = Depends(get_mongodb_service),
+):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=401, detail="Missing or invalid Authorization header"
+        )
+
+    token = authorization[7:]  # Extract the token part past "Bearer "
+    try:
+        current_user = verify_token(token)
+    except Exception as e:
+        raise HTTPException(status_code=403, detail=f"Invalid token: {str(e)}")
+
+    profile = await mongodb_service.get_user_profile(current_user["uid"])
+    if profile:
+        return {"message": "Profile retrieved successfully", "profile_data": profile}
+    else:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+
 @router.post("/profile", status_code=201)
 async def create_profile(
     profile_data: UserProfileCreate,
@@ -184,21 +207,36 @@ async def create_profile(
             profile_data_dict = profile_data.dict()
             profile_data_dict["is_setup"] = True  # Ensure setup is marked complete
             profile_data_dict["birthdate"] = profile_data_dict["birthdate"].isoformat()
-            success = await mongodb_service.update_user_profile(current_user["uid"], profile_data_dict)
+            success = await mongodb_service.update_user_profile(
+                current_user["uid"], profile_data_dict
+            )
             if not success:
-                raise HTTPException(status_code=500, detail="Failed to update existing preliminary profile")
-            return {"message": "Profile updated successfully", "profile_data": profile_data.dict()}
+                raise HTTPException(
+                    status_code=500,
+                    detail="Failed to update existing preliminary profile",
+                )
+            return {
+                "message": "Profile updated successfully",
+                "profile_data": profile_data.dict(),
+            }
         else:
-            raise HTTPException(status_code=400, detail="Profile already exists. Use PUT to update.")
+            raise HTTPException(
+                status_code=400, detail="Profile already exists. Use PUT to update."
+            )
     else:
         # If there's no profile at all, create one
         profile_data_dict = profile_data.dict()
         profile_data_dict["birthdate"] = profile_data_dict["birthdate"].isoformat()
         profile_data_dict["is_setup"] = True  # Mark setup as complete upon creation
-        success = await mongodb_service.create_user_profile(current_user["uid"], profile_data_dict)
+        success = await mongodb_service.create_user_profile(
+            current_user["uid"], profile_data_dict
+        )
         if not success:
             raise HTTPException(status_code=500, detail="Failed to create profile")
-        return {"message": "Profile created successfully", "profile_data": profile_data.dict()}
+        return {
+            "message": "Profile created successfully",
+            "profile_data": profile_data.dict(),
+        }
 
 
 @router.put("/profile")
@@ -218,13 +256,17 @@ async def update_profile(
 
     existing_profile = await mongodb_service.get_user_profile(current_user["uid"])
     if not existing_profile:
-        raise HTTPException(status_code=404, detail="Profile not found. Use POST to create.")
+        raise HTTPException(
+            status_code=404, detail="Profile not found. Use POST to create."
+        )
 
     # Allow updates to preliminary profiles
     if existing_profile.get("is_setup") is False:
         profile_data_dict = profile_data.dict(exclude_unset=True)
         profile_data_dict["is_setup"] = True  # Mark as fully setup after update
-        success = await mongodb_service.update_user_profile(current_user["uid"], profile_data_dict)
+        success = await mongodb_service.update_user_profile(
+            current_user["uid"], profile_data_dict
+        )
         if not success:
             raise HTTPException(status_code=500, detail="Failed to update profile")
 
@@ -235,7 +277,9 @@ async def update_profile(
             k: v.isoformat() if k == "birthdate" and v is not None else v
             for k, v in profile_data.dict(exclude_unset=True).items()
         }
-        result = await mongodb_service.update_user_profile(current_user["uid"], profile_dict)
+        result = await mongodb_service.update_user_profile(
+            current_user["uid"], profile_dict
+        )
         if not result:
             raise HTTPException(status_code=500, detail="Failed to update profile")
 

@@ -25,7 +25,10 @@ class LoginRequest(BaseModel):
 
 
 @router.post("/signup")
-async def signup(request: SignupRequest, mongodb_service: MongoDBService = Depends(get_mongodb_service)):
+async def signup(
+    request: SignupRequest,
+    mongodb_service: MongoDBService = Depends(get_mongodb_service),
+):
     try:
         # Create the user in Firebase
         user = create_user(email=request.email, password=request.password)
@@ -40,7 +43,10 @@ async def signup(request: SignupRequest, mongodb_service: MongoDBService = Depen
         profile_data = {"user_id": user.uid, "is_setup": False}
         created = await mongodb_service.create_user_profile(user.uid, profile_data)
         if not created:
-            raise HTTPException(status_code=500, detail="Failed to create initial user profile in MongoDB")
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to create initial user profile in MongoDB",
+            )
 
         return {
             "message": "User created successfully. Verification email sent.",
