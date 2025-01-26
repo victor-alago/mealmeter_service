@@ -174,7 +174,7 @@ async def get_profile(
     try:
         current_user = verify_token(token)
     except Exception as e:
-        raise HTTPException(status_code=403, detail="Invalid token")
+        raise HTTPException(status_code=403, detail=f"Invalid token: {str(e)}")
 
     profile = await mongodb_service.get_user_profile(current_user["uid"])
     if profile:
