@@ -199,3 +199,28 @@ Repo for meal meter services
         ]
     ```
     - 200 Ok Code
+
+
+
+#### FOOD SEARCH ROUTE
+
+- ##### Search Food
+    - Route:
+    ```js
+        GET http://127.0.0.1:8000/food/search?query=chicken
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details:
+    ```json
+        {
+            "results": [
+                {
+                    "food_id": "...",
+                    "food_name": "...",
+                    "food_description": "..."
+                },
+                ...
+            ]
+        }
+    ```
+    - 200 Ok Code
