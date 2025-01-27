@@ -67,140 +67,6 @@ Repo for meal meter services
 
 #### FOOD LOG ROUTES
 
-
-#### PROFILE ROUTES
-
-- ##### Create Profile
-    - Route:
-    ```js
-        POST http://127.0.0.1:8000/users/profile
-    ```
-
-    - Body:
-    ```json
-       {
-            "gender": "male",
-            "birthdate": "2000-01-01",
-            "height_cm": 180.0,
-            "weight_kg": 80.0,
-            "activity_level": "moderately active",
-            "goal": "weight maintenance",
-            "diet_type": "standard",
-            "food_preferences": ["chicken", "rice"],
-            "allergies": ["nuts"],
-            "health_metrics": {
-                "medical_conditions": ["none"],
-                "medications": ["none"]
-            }
-        }
-    ```
-    - Remember to add Auth Token in the Header !
-
-    - Returned Details:
-    ```json
-        {
-            "message": "Profile created successfully",
-            "profile_data": {
-                "gender": "male",
-                "birthdate": "2000-01-01",
-                "height_cm": 180.0,
-                "weight_kg": 80.0,
-                "activity_level": "moderately active",
-                "goal": "weight maintenance",
-                "diet_type": "standard",
-                "food_preferences": ["chicken", "rice"],
-                "allergies": ["nuts"],
-                "health_metrics": {
-                    "medical_conditions": ["none"],
-                    "medications": ["none"]
-                },
-                "is_setup": true
-            }
-        }
-    ```
-    - 201 Success Code
-
-
-- ##### Update Profile
-    - Route:
-    ```js
-        PUT http://127.0.0.1:8000/users/profile
-    ```
-
-    - Body:
-    ```json
-       {
-            "weight_kg": 82.0,
-            "food_preferences": ["fish", "vegetables"]
-        }
-    ```
-    - Remember to add Auth Token in the Header !
-
-    - Returned Details:
-    ```json
-        {
-            "message": "Profile updated successfully"
-        }
-    ```
-    - 200 Ok Code
-
-
-#### INSIGHTS ROUTES
-
-- ##### Get Nutrition Insights
-    - Route:
-    ```js
-        GET http://127.0.0.1:8000/insights/nutrition
-    ```
-
-    - Remember to add Auth Token in the Header !
-
-    - Returned Details:
-    ```json
-        {
-            "tdee": 2500.0,
-            "protein_grams": 150.0,
-            "carbs_grams": 250.0,
-            "fats_grams": 55.0
-        }
-    ```
-    - 200 Ok Code
-
-
-#### FOOD SEARCH ROUTES
-
-- ##### Search Food
-    - Route:
-    ```js
-        GET http://127.0.0.1:8000/food/search?query=apple
-    ```
-
-    - Query Params:
-    ```
-        query: "food to search"
-    ```
-
-    - Remember to add Auth Token in the Header !
-
-    - Returned Details:
-    ```json
-        {
-            "results": [
-                {
-                    "food_id": "54321",
-                    "food_name": "Apple",
-                    "food_description": "per 1 medium apple (approx 182g) - Calories: 95kcal | Carbs: 25.13g | Fat: 0.3g | Protein: 0.47g",
-                },
-                {
-                    "food_id": "12345",
-                    "food_name": "Apple Juice",
-                    "food_description": "per 8 fl oz (240ml) - Calories: 110kcal | Carbs: 28g | Fat: 0g | Protein: 0g",
-                }
-            ]
-        }
-    ```
-    - 200 Ok Code
-
 - ##### Add Food
     - Route:
     ```js
@@ -331,5 +197,118 @@ Repo for meal meter services
                 }
             }
         ]
+    ```
+    - 200 Ok Code
+
+
+
+#### PROFILE ROUTES
+
+- ##### Profile Creation
+    - Route:
+    ```js
+        POST http://127.0.0.1:8000/users/profile
+    ```
+    - Body (UserProfileCreate model):
+    ```json
+        {
+            "gender": "male",
+            "birthdate": "2000-01-01",
+            "height_cm": 180.0,
+            "weight_kg": 80.0,
+            "activity_level": "moderately active",
+            "goal": "weight maintenance"
+
+        }
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details:
+    ```json
+        {
+            "message": "Profile created successfully",
+            "profile_data": {
+                "gender": "male",
+                "birthdate": "2000-01-01",
+                "height_cm": 180.0,
+                "weight_kg": 80.0,
+                "activity_level": "moderately active",
+                "goal": "weight maintenance",
+                "target_weight": 80.0,
+                "weekly_goal_kg": 0.0,
+                "diet_type": null,
+                "food_preferences": null,
+                "allergies": null,
+                "health_metrics": null
+            }
+        }
+    ```
+    - 201 Success Code
+
+- ##### Profile Update
+    - Route:
+    ```js
+        PUT http://127.0.0.1:8000/users/profile
+    ```
+    - Body (UserProfileUpdate model):
+    ```json
+        {
+            "weight_kg": 78.0,
+            "goal": "weight loss",
+            "target_weight": 75.0,
+            "weekly_goal_kg": 0.5
+        }
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details:
+    ```json
+        {
+            "message": "Profile updated successfully"
+        }
+    ```
+    - 200 Ok Code
+
+
+
+#### INSIGHT ROUTE
+
+- ##### Get Nutrition Insights
+    - Route:
+    ```js
+        GET http://127.0.0.1:8000/insights/nutrition
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details (MacronutrientDistribution model):
+    ```json
+        {
+            "tdee": 2500.0,
+            "protein_grams": 156.25,
+            "carbs_grams": 328.125,
+            "fats_grams": 69.444
+        }
+    ```
+    - 200 Ok Code
+
+
+
+#### FOOD SEARCH ROUTE
+
+- ##### Search Food
+    - Route:
+    ```js
+        GET http://127.0.0.1:8000/food/search?query=chicken
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details:
+    ```json
+        {
+            "results": [
+                {
+                    "food_id": "...",
+                    "food_name": "...",
+                    "food_description": "..."
+                },
+                ...
+            ]
+        }
     ```
     - 200 Ok Code
