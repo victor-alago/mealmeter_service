@@ -199,3 +199,70 @@ Repo for meal meter services
         ]
     ```
     - 200 Ok Code
+
+
+
+#### PROFILE ROUTES
+
+- ##### Profile Creation
+    - Route:
+    ```js
+        POST http://127.0.0.1:8000/users/profile
+    ```
+    - Body (UserProfileCreate model):
+    ```json
+        {
+            "gender": "male",
+            "birthdate": "2000-01-01",
+            "height_cm": 180.0,
+            "weight_kg": 80.0,
+            "activity_level": "moderately active",
+            "goal": "weight maintenance"
+
+        }
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details:
+    ```json
+        {
+            "message": "Profile created successfully",
+            "profile_data": {
+                "gender": "male",
+                "birthdate": "2000-01-01",
+                "height_cm": 180.0,
+                "weight_kg": 80.0,
+                "activity_level": "moderately active",
+                "goal": "weight maintenance",
+                "target_weight": 80.0,
+                "weekly_goal_kg": 0.0,
+                "diet_type": null,
+                "food_preferences": null,
+                "allergies": null,
+                "health_metrics": null
+            }
+        }
+    ```
+    - 201 Success Code
+
+- ##### Profile Update
+    - Route:
+    ```js
+        PUT http://127.0.0.1:8000/users/profile
+    ```
+    - Body (UserProfileUpdate model):
+    ```json
+        {
+            "weight_kg": 78.0,
+            "goal": "weight loss",
+            "target_weight": 75.0,
+            "weekly_goal_kg": 0.5
+        }
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details:
+    ```json
+        {
+            "message": "Profile updated successfully"
+        }
+    ```
+    - 200 Ok Code
