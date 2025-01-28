@@ -266,3 +266,24 @@ Repo for meal meter services
         }
     ```
     - 200 Ok Code
+
+
+    
+#### INSIGHT ROUTE
+
+- ##### Get Nutrition Insights
+    - Route:
+    ```js
+        GET http://127.0.0.1:8000/insights/nutrition
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details (MacronutrientDistribution model):
+    ```json
+        {
+            "tdee": 2500.0,
+            "protein_grams": 156.25,
+            "carbs_grams": 328.125,
+            "fats_grams": 69.444
+        }
+    ```
+    - 200 Ok Code
