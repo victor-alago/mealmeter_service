@@ -114,13 +114,14 @@ def login_user(email: str, password: str):
 
 # In firebase_service.py
 
+
 # Function to send password reset email
 async def send_password_reset_email(email: str, link: str):
     message = MessageSchema(
         subject="Reset Your Password",
         recipients=[email],  # List of recipients
         body=f"Please reset your password by clicking on this link: {link}",
-        subtype="html"
+        subtype="html",
     )
 
     fm = FastMail(conf)
