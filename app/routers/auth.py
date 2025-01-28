@@ -116,8 +116,8 @@ async def reset_password(request: ResetPasswordRequest):
 @router.post("/update-password")
 async def update_password(request: UpdatePasswordRequest, authorization: str = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authorization token is missing or invalid.")
-    
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                             detail="Authorization token is missing or invalid.")
     id_token = authorization.split(" ")[1]  # Extract the token past "Bearer"
     try:
         # Decode the ID token and verify the old password
