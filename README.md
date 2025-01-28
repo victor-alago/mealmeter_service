@@ -115,14 +115,16 @@ Repo for meal meter services
                         {
                             "food_name": "Oatmeal with banana",
                             "calories": 300.0,
-                            "serving_size": "1 bowl"
+                            "serving_size": "1 bowl",
+                            "time_logged": "15:45:16"
                         }
                     ],
                     "lunch": [
                         {
                             "food_name": "Chicken Caesar Salad",
                             "calories": 450.0,
-                            "serving_size": "1 plate"
+                            "serving_size": "1 plate",
+                            "time_logged": "18:55:23"
                         }
                     ],
                     "dinner": [],
