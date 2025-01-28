@@ -61,7 +61,8 @@ class UserProfileCreate(BaseModel):
     diet_type: Optional[DietaryPreference] = None
     food_preferences: Optional[List[str]] = None
     allergies: Optional[List[str]] = None
-    health_metrics: Optional[HealthMetrics] = None
+    medical_conditions: Optional[List[str]] = None
+    medications: Optional[List[str]] = None
 
     @root_validator(skip_on_failure=True)
     def validate_goals(cls, values):
@@ -113,7 +114,8 @@ class UserProfileUpdate(BaseModel):
     diet_type: Optional[DietaryPreference] = None
     food_preferences: Optional[List[str]] = None
     allergies: Optional[List[str]] = None
-    health_metrics: Optional[HealthMetrics] = None
+    medical_conditions: Optional[List[str]] = None
+    medications: Optional[List[str]] = None
 
     @root_validator(skip_on_failure=True)
     def validate_goals_update(cls, values):

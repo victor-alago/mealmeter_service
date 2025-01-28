@@ -72,21 +72,17 @@ class MongoDBService:
             return profile
         except PyMongoError as e:
             raise RuntimeError(f"MongoDB operation failed: {str(e)}")
-        
-    
+
     async def add_food_entry(self, user_id: str, entry_data: Dict[str, Any]):
         try:
             date_str = entry_data["date"]
-            
+
             # Find the daily log document
-            daily_log = self.food_logs.find_one({
-                "user_id": user_id,
-                "date": date_str
-            })
-            
+            daily_log = self.food_logs.find_one({"user_id": user_id, "date": date_str})
+
             # Calculate new calories
             new_calories = entry_data["calories"]
-            
+
             if not daily_log:
                 # Create new daily log if it doesn't exist
                 initial_log = {
@@ -100,19 +96,19 @@ class MongoDBService:
                         "lunch": [],
                         "dinner": [],
                         "snacks": [],
-                        "drinks": []
-                    }
+                        "drinks": [],
+                    },
                 }
-                
+
                 # Add the food entry to appropriate meal type
                 meal_type = entry_data["meal_type"].lower()
                 new_entry = {
                     "food_name": entry_data["food_name"],
                     "calories": new_calories,
-                    "serving_size": entry_data.get("serving_size")
+                    "serving_size": entry_data.get("serving_size"),
                 }
                 initial_log["meals"][meal_type].append(new_entry)
-                
+
                 # Insert the new document
                 result = self.food_logs.insert_one(initial_log)
                 return result.acknowledged
@@ -121,14 +117,14 @@ class MongoDBService:
                 current_total = daily_log.get("total_calories", 0)
                 new_total = current_total + new_calories
                 remaining = daily_log["target_calories"] - new_total
-                
+
                 meal_type = entry_data["meal_type"].lower()
                 new_entry = {
                     "food_name": entry_data["food_name"],
                     "calories": new_calories,
-                    "serving_size": entry_data.get("serving_size")
+                    "serving_size": entry_data.get("serving_size"),
                 }
-                
+
                 # Update the existing document
                 result = self.food_logs.update_one(
                     {"user_id": user_id, "date": date_str},
@@ -136,26 +132,24 @@ class MongoDBService:
                         "$push": {f"meals.{meal_type}": new_entry},
                         "$set": {
                             "total_calories": new_total,
-                            "remaining_calories": remaining
-                        }
-                    }
+                            "remaining_calories": remaining,
+                        },
+                    },
                 )
                 return result.acknowledged
-            
+
         except PyMongoError as e:
             raise RuntimeError(f"MongoDB operation failed: {str(e)}")
-        
-    
-    async def get_daily_food_log(self, user_id: str, date_param: date) -> Optional[Dict[str, Any]]:
+
+    async def get_daily_food_log(
+        self, user_id: str, date_param: date
+    ) -> Optional[Dict[str, Any]]:
         try:
             date_str = date_param.isoformat()
-            
+
             # Find the daily log
-            daily_log = self.food_logs.find_one({
-                "user_id": user_id,
-                "date": date_str
-            })
-            
+            daily_log = self.food_logs.find_one({"user_id": user_id, "date": date_str})
+
             if not daily_log:
                 # Return empty daily log structure
                 return {
@@ -168,58 +162,57 @@ class MongoDBService:
                         "lunch": [],
                         "dinner": [],
                         "snacks": [],
-                        "drinks": []
-                    }
+                        "drinks": [],
+                    },
                 }
-            
+
             # Remove MongoDB-specific fields
             if "_id" in daily_log:
                 daily_log.pop("_id")
-            
+
             # Convert number types to float/int
             daily_log["total_calories"] = float(daily_log["total_calories"])
             daily_log["target_calories"] = int(daily_log["target_calories"])
             daily_log["remaining_calories"] = float(daily_log["remaining_calories"])
-            
+
             # Convert nested number types in meals
             for meal_type in daily_log["meals"]:
                 for entry in daily_log["meals"][meal_type]:
                     if "calories" in entry:
                         entry["calories"] = float(entry["calories"])
-            
+
             return daily_log
         except PyMongoError as e:
             raise RuntimeError(f"MongoDB operation failed: {str(e)}")
-        
 
     async def get_all_user_food_logs(self, user_id: str) -> List[Dict[str, Any]]:
         try:
             # Find all logs for the user
             logs = self.food_logs.find({"user_id": user_id})
-            
+
             # Convert cursor to list and process each log
             all_logs = []
             for log in logs:
                 # Remove MongoDB-specific fields
                 if "_id" in log:
                     log.pop("_id")
-                
+
                 # Convert number types to float/int
                 log["total_calories"] = float(log["total_calories"])
                 log["target_calories"] = int(log["target_calories"])
                 log["remaining_calories"] = float(log["remaining_calories"])
-                
+
                 # Convert nested number types in meals
                 for meal_type in log["meals"]:
                     for entry in log["meals"][meal_type]:
                         if "calories" in entry:
                             entry["calories"] = float(entry["calories"])
-                
+
                 all_logs.append(log)
-            
+
             # Sort by date (most recent first)
             all_logs.sort(key=lambda x: x["date"], reverse=True)
-            
+
             return all_logs
         except PyMongoError as e:
             raise RuntimeError(f"MongoDB operation failed: {str(e)}")
