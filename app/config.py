@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     mail_from_name: str
     firebase_api_key: str
     mongodb_uri: str
+    openai_api_key: str
 
     class Config:
         env_file = ".env"
