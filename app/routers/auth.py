@@ -51,8 +51,12 @@ async def signup(
         # Send the verification email
         await send_verification_email(request.email, email_verification_link)
 
-        # Create a preliminary MongoDB profile
-        profile_data = {"user_id": user.uid, "is_setup": False}
+        # Create a preliminary MongoDB profile including the email
+        profile_data = {
+            "user_id": user.uid,
+            "email": request.email,  # Include the email in the profile data
+            "is_setup": False
+        }
         created = await mongodb_service.create_user_profile(user.uid, profile_data)
         if not created:
             raise HTTPException(
