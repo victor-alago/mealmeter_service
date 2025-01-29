@@ -11,3 +11,4 @@ pytest-asyncio
 httpx
 flake8
 pymongo[srv]
+openai
