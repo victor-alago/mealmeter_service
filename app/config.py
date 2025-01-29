@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     mail_from_name: str
     firebase_api_key: str
     mongodb_uri: str
+    fatsecret_client_id: str
+    fatsecret_client_secret: str
     openai_api_key: str
 
     class Config:

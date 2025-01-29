@@ -42,3 +42,6 @@ jobs:
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          FATSECRET_CLIENT_ID: ${{ secrets.FATSECRET_CLIENT_ID }}
+          FATSECRET_CLIENT_SECRET: ${{ secrets.FATSECRET_CLIENT_SECRET }}
+          
