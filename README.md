@@ -317,7 +317,7 @@ Repo for meal meter services
 
 
 
-- ##### Chat
+#### Chat
     - Route:
     ```js
         POST http://127.0.0.1:8000/chat/message
