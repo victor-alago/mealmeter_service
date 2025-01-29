@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     mongodb_uri: str
     fatsecret_client_id: str
     fatsecret_client_secret: str
+    openai_api_key: str
 
     class Config:
         env_file = ".env"

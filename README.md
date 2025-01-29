@@ -115,14 +115,16 @@ Repo for meal meter services
                         {
                             "food_name": "Oatmeal with banana",
                             "calories": 300.0,
-                            "serving_size": "1 bowl"
+                            "serving_size": "1 bowl",
+                            "time_logged": "15:45:16"
                         }
                     ],
                     "lunch": [
                         {
                             "food_name": "Chicken Caesar Salad",
                             "calories": 450.0,
-                            "serving_size": "1 plate"
+                            "serving_size": "1 plate",
+                            "time_logged": "18:55:23"
                         }
                     ],
                     "dinner": [],
@@ -224,3 +226,115 @@ Repo for meal meter services
         }
     ```
     - 200 Ok Code
+
+
+    
+#### PROFILE ROUTES
+
+- ##### Profile Creation
+    - Route:
+    ```js
+        POST http://127.0.0.1:8000/users/profile
+    ```
+    - Body (UserProfileCreate model):
+    ```json
+        {
+            "gender": "male",
+            "birthdate": "2000-01-01",
+            "height_cm": 180.0,
+            "weight_kg": 80.0,
+            "activity_level": "moderately active",
+            "goal": "weight maintenance"
+
+        }
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details:
+    ```json
+        {
+            "message": "Profile created successfully",
+            "profile_data": {
+                "gender": "male",
+                "birthdate": "2000-01-01",
+                "height_cm": 180.0,
+                "weight_kg": 80.0,
+                "activity_level": "moderately active",
+                "goal": "weight maintenance",
+                "target_weight": 80.0,
+                "weekly_goal_kg": 0.0,
+                "diet_type": null,
+                "food_preferences": null,
+                "allergies": null,
+                "health_metrics": null
+            }
+        }
+    ```
+    - 201 Success Code
+
+- ##### Profile Update
+    - Route:
+    ```js
+        PUT http://127.0.0.1:8000/users/profile
+    ```
+    - Body (UserProfileUpdate model):
+    ```json
+        {
+            "weight_kg": 78.0,
+            "goal": "weight loss",
+            "target_weight": 75.0,
+            "weekly_goal_kg": 0.5
+        }
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details:
+    ```json
+        {
+            "message": "Profile updated successfully"
+        }
+    ```
+    - 200 Ok Code
+
+
+
+#### INSIGHT ROUTE
+
+- ##### Get Nutrition Insights
+    - Route:
+    ```js
+        GET http://127.0.0.1:8000/insights/nutrition
+    ```
+    - Remember to add Auth Token in the Header !
+    - Returned Details (MacronutrientDistribution model):
+    ```json
+        {
+            "tdee": 2500.0,
+            "protein_grams": 156.25,
+            "carbs_grams": 328.125,
+            "fats_grams": 69.444
+        }
+    ```
+    - 200 Ok Code
+
+
+
+- ##### Chat
+    - Route:
+    ```js
+        POST http://127.0.0.1:8000/chat/message
+    ```
+
+    - Body:
+    ```json
+        {
+            "message": "How can I track my calories in this app?"
+        }
+    ```
+    - Remember to add Auth Token in the Header !
+
+    - Returned Details:
+    ```json
+        {
+            "response": "Chat AI Good Response"
+        }
+    ```
+    - 201 Success Code

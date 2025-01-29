@@ -110,3 +110,24 @@ def login_user(email: str, password: str):
         }
     except Exception as e:
         raise ValueError(f"Error logging in user: {e}")
+
+
+# In firebase_service.py
+
+
+# Function to send password reset email
+async def send_password_reset_email(email: str, link: str):
+    message = MessageSchema(
+        subject="Reset Your Password",
+        recipients=[email],  # List of recipients
+        body=f"Please reset your password by clicking on this link: {link}",
+        subtype="html",
+    )
+
+    fm = FastMail(conf)
+    try:
+        await fm.send_message(message)
+        print(f"Password reset email sent to {email}")
+    except Exception as e:
+        print(f"Error sending password reset email to {email}: {e}")
+        raise

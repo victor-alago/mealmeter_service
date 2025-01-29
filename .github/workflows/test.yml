@@ -41,3 +41,4 @@ jobs:
           MAIL_FROM_NAME: ${{ secrets.MAIL_FROM_NAME }}
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
