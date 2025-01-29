@@ -289,3 +289,26 @@ Repo for meal meter services
         }
     ```
     - 200 Ok Code
+
+
+- ##### Chat
+    - Route:
+    ```js
+        POST http://127.0.0.1:8000/chat/message
+    ```
+
+    - Body:
+    ```json
+        {
+            "message": "How can I track my calories in this app?"
+        }
+    ```
+    - Remember to add Auth Token in the Header !
+
+    - Returned Details:
+    ```json
+        {
+            "response": "Chat AI Good Response"
+        }
+    ```
+    - 201 Success Code
