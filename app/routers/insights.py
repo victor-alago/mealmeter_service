@@ -117,10 +117,6 @@ async def get_nutrition(
         # Calculate TDEE
         tdee = calculate_tdee(bmr, profile.activity_level)
 
-        # Adjust for medications
-        if profile.health_metrics and profile.health_metrics.medications:
-            tdee = adjust_for_medications(tdee, profile.health_metrics.medications)
-
         # Calculate calorie adjustment based on goal
         daily_adjustment = calculate_calorie_adjustment(profile.weekly_goal_kg)
 
