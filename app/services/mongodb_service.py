@@ -165,12 +165,16 @@ class MongoDBService:
             daily_log = self.food_logs.find_one({"user_id": user_id, "date": date_str})
 
             if not daily_log:
-                # Return empty daily log structure
+                # Get user's TDEE from insights
+                user_insights = self.user_insights.find_one({"user_id": user_id})
+                target_calories = user_insights["tdee"] if user_insights else 2000  # Default if no insights
+
+                # Return empty daily log structure with TDEE as target
                 return {
                     "date": date_str,
                     "total_calories": 0,
-                    "target_calories": 2000,
-                    "remaining_calories": 2000,
+                    "target_calories": target_calories,
+                    "remaining_calories": target_calories,
                     "meals": {
                         "breakfast": [],
                         "lunch": [],
