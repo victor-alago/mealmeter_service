@@ -37,19 +37,19 @@ def calculate_bmr(weight_kg: float, height_cm: float, age: int, gender: str) -> 
     else:
         return 10 * weight_kg + 6.25 * height_cm - 5 * age - 161
 
-def calculate_tdee(bmr: float, activity_level: str) -> float:
-    return bmr * ACTIVITY_FACTORS[activity_level]
+def calculate_tdee(bmr: float, activity_level: str) -> int:
+    return int(bmr * ACTIVITY_FACTORS[activity_level])
 
 def calculate_calorie_adjustment(weekly_goal_kg: float) -> float:
     weekly_adjustment = weekly_goal_kg * 7700
     return weekly_adjustment / 7
 
-def calculate_macros(tdee: float, goal: str) -> Dict[str, float]:
+def calculate_macros(tdee: float, goal: str) -> Dict[str, int]:
     ratios = MACRO_RATIOS[goal]
     return {
-        "protein_grams": (tdee * ratios["protein"]) / 4,
-        "carbs_grams": (tdee * ratios["carbs"]) / 4,
-        "fats_grams": (tdee * ratios["fats"]) / 9,
+        "protein_grams": int((tdee * ratios["protein"]) / 4),
+        "carbs_grams": int((tdee * ratios["carbs"]) / 4),
+        "fats_grams": int((tdee * ratios["fats"]) / 9),
     }
 
 async def calculate_nutrition_for_user(user_id: str, mongodb_service: MongoDBService) -> Tuple[float, Dict[str, float]]:
