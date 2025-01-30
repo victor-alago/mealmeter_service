@@ -35,6 +35,12 @@ class MongoDBService:
                 print("Created food_logs collection")
             self.food_logs = self.db.food_logs
 
+            # Create insights collection if it doesn't exist
+            if "user_insights" not in self.db.list_collection_names():
+                self.db.create_collection("user_insights")
+                print("Created insights collection")
+            self.user_insights = self.db.user_insights
+
         except Exception as e:
             print(f"MongoDB connection failed: {str(e)}")
             raise RuntimeError(f"Failed to connect to MongoDB: {str(e)}")
@@ -55,11 +61,18 @@ class MongoDBService:
         except PyMongoError as e:
             raise RuntimeError(f"MongoDB operation failed: {str(e)}")
 
-    async def update_user_profile(self, user_id: str, profile_data: Dict[str, Any]):
+    async def update_user_profile(self, user_id: str, profile_data: Dict[str, Any], is_new: bool = False):
         try:
+            # Add user_id to profile data
+            profile_data["user_id"] = user_id
+            
+            # Update or insert the profile
             result = self.profiles.update_one(
-                {"user_id": user_id}, {"$set": profile_data}, upsert=False
+                {"user_id": user_id},
+                {"$set": profile_data},
+                upsert=True  # This creates a new document if it doesn't exist
             )
+            
             return result.acknowledged
         except PyMongoError as e:
             raise RuntimeError(f"MongoDB operation failed: {str(e)}")
@@ -76,35 +89,32 @@ class MongoDBService:
     async def add_food_entry(self, user_id: str, entry_data: Dict[str, Any]):
         try:
             date_str = entry_data["date"]
-            
-            # Add current timestamp to the entry
             current_time = datetime.now().strftime("%H:%M:%S")
             
-            # Find the daily log document
+            # Get user's TDEE from insights
+            user_insights = self.user_insights.find_one({"user_id": user_id})
+            target_calories = user_insights["tdee"] if user_insights else 2000  # Default if no insights
+            
+            new_calories = entry_data["calories"]
+            new_entry = {
+                "food_name": entry_data["food_name"],
+                "calories": new_calories,
+                "serving_size": entry_data.get("serving_size"),
+                "time_logged": current_time
+            }
+            
             daily_log = self.food_logs.find_one({
                 "user_id": user_id,
                 "date": date_str
             })
             
-            # Calculate new calories
-            new_calories = entry_data["calories"]
-            
-            # Create the new entry with timestamp
-            new_entry = {
-                "food_name": entry_data["food_name"],
-                "calories": new_calories,
-                "serving_size": entry_data.get("serving_size"),
-                "time_logged": current_time  # Add timestamp to each entry
-            }
-            
             if not daily_log:
-                # Create new daily log if it doesn't exist
                 initial_log = {
                     "user_id": user_id,
                     "date": date_str,
                     "total_calories": new_calories,
-                    "target_calories": 2000,
-                    "remaining_calories": 2000 - new_calories,
+                    "target_calories": target_calories,  # Use TDEE from insights
+                    "remaining_calories": target_calories - new_calories,
                     "meals": {
                         "breakfast": [],
                         "lunch": [],
@@ -114,7 +124,6 @@ class MongoDBService:
                     }
                 }
                 
-                # Add the food entry to appropriate meal type
                 meal_type = entry_data["meal_type"].lower()
                 initial_log["meals"][meal_type].append(new_entry)
                 
@@ -125,7 +134,7 @@ class MongoDBService:
                 # Update existing daily log
                 current_total = daily_log.get("total_calories", 0)
                 new_total = current_total + new_calories
-                remaining = daily_log["target_calories"] - new_total
+                remaining = target_calories - new_total  # Use TDEE from insights
                 
                 meal_type = entry_data["meal_type"].lower()
                 
@@ -136,7 +145,8 @@ class MongoDBService:
                         "$push": {f"meals.{meal_type}": new_entry},
                         "$set": {
                             "total_calories": new_total,
-                            "remaining_calories": remaining
+                            "remaining_calories": remaining,
+                            "target_calories": target_calories  # Update target calories
                         }
                     }
                 )
@@ -218,6 +228,17 @@ class MongoDBService:
             all_logs.sort(key=lambda x: x["date"], reverse=True)
 
             return all_logs
+        except PyMongoError as e:
+            raise RuntimeError(f"MongoDB operation failed: {str(e)}")
+
+    async def update_user_insights(self, user_id: str, insights_data: Dict[str, Any]):
+        try:
+            result = self.user_insights.update_one(
+                {"user_id": user_id},
+                {"$set": insights_data},
+                upsert=True
+            )
+            return result.acknowledged
         except PyMongoError as e:
             raise RuntimeError(f"MongoDB operation failed: {str(e)}")
 

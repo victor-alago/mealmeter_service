@@ -5,6 +5,7 @@ from typing import List, Optional
 from pydantic import BaseModel, root_validator
 from app.services.firebase_service import verify_token
 from app.services.mongodb_service import MongoDBService, get_mongodb_service
+from app.services.nutrition_service import calculate_nutrition_for_user
 
 
 # Dependency to get the current user from the Firebase token
@@ -217,6 +218,8 @@ async def create_profile(
                     status_code=500,
                     detail="Failed to update existing preliminary profile",
                 )
+            # Calculate and store insights
+            await calculate_nutrition_for_user(current_user["uid"], mongodb_service)
             return {
                 "message": "Profile updated successfully",
                 "profile_data": profile_data.dict(),
@@ -235,6 +238,8 @@ async def create_profile(
         )
         if not success:
             raise HTTPException(status_code=500, detail="Failed to create profile")
+        # Calculate and store insights
+        await calculate_nutrition_for_user(current_user["uid"], mongodb_service)
         return {
             "message": "Profile created successfully",
             "profile_data": profile_data.dict(),
@@ -272,6 +277,8 @@ async def update_profile(
         if not success:
             raise HTTPException(status_code=500, detail="Failed to update profile")
 
+        # Calculate and store insights
+        await calculate_nutrition_for_user(current_user["uid"], mongodb_service)
         return {"message": "Profile updated successfully"}
     else:
         # Normal update process for already fully setup profiles
@@ -285,4 +292,6 @@ async def update_profile(
         if not result:
             raise HTTPException(status_code=500, detail="Failed to update profile")
 
+        # Calculate and store insights
+        await calculate_nutrition_for_user(current_user["uid"], mongodb_service)
         return {"message": "Profile updated successfully"}
