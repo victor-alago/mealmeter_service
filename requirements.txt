@@ -12,3 +12,4 @@ httpx
 flake8
 pymongo[srv]
 openai
+python-multipart
