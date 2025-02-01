@@ -17,19 +17,22 @@ def recognize_food_from_image(image_path):
         messages=[
             {
                 "role": "system",
-                "content": """You are a dietitian. A user sends you an image of a meal and you tell them how many calories are in it. Use the following JSON format:
-
-{
-    "reasoning": "reasoning for the total calories",
-    "food_items": [
-        {
-            "name": "food item name",
-            "calories": "calories in the food item",
-            "serving": "serving size of the food item"
-        }
-    ],
-    "total": "total calories in the meal"
-}"""
+                "content": (
+                    "You are a dietitian. A user sends you an image of a meal and "
+                    "you tell them how many calories are in it. Use the following "
+                    "JSON format:\n\n"
+                    "{\n"
+                    "    \"reasoning\": \"reasoning for the total calories\",\n"
+                    "    \"food_items\": [\n"
+                    "        {\n"
+                    "            \"name\": \"food item name\",\n"
+                    "            \"calories\": \"calories in the food item\",\n"
+                    "            \"serving\": \"serving size of the food item\"\n"
+                    "        }\n"
+                    "    ],\n"
+                    "    \"total\": \"total calories in the meal\"\n"
+                    "}"
+                )
             },
             {
                 "role": "user",
@@ -41,7 +44,8 @@ def recognize_food_from_image(image_path):
                     {
                         "type": "image_url",
                         "image_url": {
-                            "url": f"data:image/jpeg;base64,{base64_image}"
+                            "url":
+                                f"data:image/jpeg;base64,{base64_image}"
                         }
                     }
                 ]

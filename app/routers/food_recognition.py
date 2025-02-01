@@ -5,7 +5,7 @@ import tempfile
 router = APIRouter()
 
 @router.post("/food-recognition")
-async def food_recognition (image: UploadFile = File(...)):
+async def food_recognition(image: UploadFile = File(...)):
     if not image.filename:
         raise HTTPException(status_code=400, detail="No image uploaded")
 
